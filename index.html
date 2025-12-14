@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Rexo Tool - Free online PDF tools to merge, split, compress, convert, edit and sign PDFs. All tools work directly in your browser - no upload required."/>
+    <meta name="keywords" content="PDF tools, merge PDF, split PDF, compress PDF, convert PDF, edit PDF, sign PDF, free PDF tools, online PDF editor"/>
+    <meta name="author" content="Rexo Agency"/>
+    <meta name="robots" content="index, follow"/>
+    
+    <title>Rexo Tool - Free Online PDF Tools | Merge, Split, Compress, Convert PDFs</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23e5322d' width='100' height='100' rx='10'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3ER%3C/text%3E%3C/svg%3E"></link>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PptxGenJS/3.12.0/pptxgen.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <style>
+/*<![CDATA[*/
+        :root {
+            --primary-red: #e5322d;
+            --primary-red-dark: #c42a26;
+            --primary-red-light: #ff4d47;
+            --background-light: #f8f8fa;
+            --background-white: #ffffff;
+            --background-card: #f0f4ff;
+            --text-dark: #1a1a2e;
+            --text-gray: #6b7280;
+            --text-light: #9ca3af;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: var(--background-white);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-red);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--primary-red);
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-desktop a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .nav-desktop a:hover {
+            color: var(--primary-red);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-dark);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background-white);
+            z-index: 999;
+            padding: 80px 20px 20px;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-mobile.active {
+            display: flex;
+        }
+
+        .nav-mobile a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 18px;
+            font-weight: 500;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero {
+            background: linear-gradient(180deg, var(--background-white) 0%, var(--background-light) 100%);
+            padding: 60px 20px 40px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            background: var(--primary-red);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .hero-cta:hover {
+            background: var(--primary-red-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ad-placeholder {
+            max-width: 728px;
+            height: 90px;
+            margin: 20px auto;
+            border: 2px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-radius: var(--radius-sm);
+            background: var(--background-white);
+        }
+
+        .tools-section {
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-red);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 16px;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tool-card {
+            background: var(--background-card);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-red);
+            background: var(--background-white);
+        }
+
+        .tool-card .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--primary-red);
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .tool-icon-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: var(--background-white);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tool-arrow {
+            color: var(--text-light);
+            font-size: 18px;
+        }
+
+        .tool-icon-output {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .tool-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-red);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .tool-card p {
+            font-size: 14px;
+            color: var(--text-gray);
+            line-height: 1.5;
+        }
+
+        .features-section {
+            background: var(--background-card);
+            padding: 60px 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--background-white);
+            padding: 30px;
+            border-radius: var(--radius-md);
+            text-align: left;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        .trust-section {
+            padding: 60px 20px;
+            text-align: center;
+            background: var(--background-white);
+        }
+
+        .trust-section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .trust-section p {
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--background-light);
+            padding: 15px 25px;
+            border-radius: var(--radius-md);
+        }
+
+        .trust-badge-icon {
+            font-size: 30px;
+        }
+
+        .trust-badge span {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--background-white);
+            border-radius: var(--radius-lg);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--background-light);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 50px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--background-light);
+            margin-bottom: 20px;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--primary-red);
+            background: rgba(229, 50, 45, 0.05);
+        }
+
+        .drop-zone-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .drop-zone p {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        .drop-zone input {
+            display: none;
+        }
+
+        .file-list {
+            margin: 20px 0;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: var(--background-light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+        }
+
+        .file-item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-item-icon {
+            font-size: 24px;
+        }
+
+        .file-item-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .file-item-size {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        .file-item-remove {
+            background: none;
+            border: none;
+            color: var(--primary-red);
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px;
+            transition: var(--transition);
+        }
+
+        .file-item-remove:hover {
+            transform: scale(1.2);
+        }
+
+        .tool-options {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--background-light);
+            border-radius: var(--radius-md);
+        }
+
+        .tool-options label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .tool-options input[type="text"],
+        .tool-options input[type="number"],
+        .tool-options input[type="password"],
+        .tool-options select,
+        .tool-options textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .tool-options input:focus,
+        .tool-options select:focus,
+        .tool-options textarea:focus {
+            outline: none;
+            border-color: var(--primary-red);
+        }
+
+        .tool-options input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .range-value {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-red);
+        }
+
+        .process-btn {
+            width: 100%;
+            padding: 15px 30px;
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .process-btn:hover:not(:disabled) {
+            background: var(--primary-red-dark);
+            transform: translateY(-2px);
+        }
+
+        .process-btn:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .output-area {
+            margin-top: 20px;
+            padding: 20px;
+            background: #d4edda;
+            border-radius: var(--radius-md);
+            text-align: center;
+            display: none;
+        }
+
+        .output-area.active {
+            display: block;
+        }
+
+        .output-area a {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+
+        .output-area a:hover {
+            background: #218838;
+        }
+
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .edit-canvas-container {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .edit-canvas-container canvas {
+            display: block;
+            max-width: 100%;
+        }
+
+        .canvas-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .canvas-controls button {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            background: var(--background-white);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .canvas-controls button:hover {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+        }
+
+        .canvas-controls button.active {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+        }
+
+        .footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 50px 20px 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+
+        .footer-brand {
+            max-width: 350px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .footer-logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--primary-red);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .footer-logo-text {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .footer-brand p {
+            color: #9ca3af;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column ul li a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary-red);
+        }
+
+        .footer-contact p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 25px;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .section-title h2 {
+                font-size: 26px;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ad-placeholder {
+                height: 60px;
+            }
+
+            .modal {
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-brand {
+                max-width: 100%;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-contact p {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 40px 15px 30px;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tool-card h3 {
+                font-size: 15px;
+            }
+
+            .tool-card p {
+                font-size: 13px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+
+            .drop-zone {
+                padding: 30px 20px;
+            }
+
+            .trust-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background-light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-gray);
+        }
+/*]]>*/
+    </style>
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="header-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">R</div>
+                <div class="logo-text">Rexo <span>Tool</span></div>
+            </a>
+            
+            <nav class="nav-desktop">
+                <a href="#home">Home</a>
+                <a href="#tools">All PDF Tools</a>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <nav class="nav-mobile" id="navMobile">
+            <a href="#home">Home</a>
+            <a href="#tools">All PDF Tools</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Every Tool You Need to Work with PDFs in One Place</h1>
+            <p>Free, secure, and easy-to-use online PDF tools. All processing happens directly in your browser - your files never leave your device.</p>
+            <a href="#tools" class="hero-cta">Explore All Tools</a>
+        </div>
+    </section>
+
+    <div class="ad-placeholder">Advertisement</div>
+
+    <section class="tools-section" id="tools">
+        <div class="container">
+            <div class="section-title reveal">
+                <h2>All PDF Tools</h2>
+                <p>Rexo Tool provides a comprehensive suite of 27 free online PDF tools. Convert, edit, merge, split, and more - all directly in your browser.</p>
+            </div>
+            <div class="tools-grid" id="toolsGrid"></div>
+        </div>
+    </section>
+
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-title reveal">
+                <h2>Features</h2>
+                <p>Rexo Tool provides the best PDF tools with advanced features tailored for your needs - all for FREE!</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">&#128260;</div>
+                    <h3>Multi-format Conversion</h3>
+                    <p>Convert PDFs to Word, Excel, PPT, images, and more. All tools are 100% FREE!</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">&#9889;</div>
+                    <h3>Batch Processing</h3>
+                    <p>Save time by converting multiple files at once with our fast and reliable batch processing tools.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">&#10024;</div>
+                    <h3>High-quality Output</h3>
+                    <p>Keep your original formatting, fonts, and images intact with our high-fidelity conversions.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">&#128640;</div>
+                    <h3>Fast Processing</h3>
+                    <p>Get your files converted in seconds with our powerful and optimized processing. No more waiting!</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">&#128274;</div>
+                    <h3>Secure File Handling</h3>
+                    <p>Your files are processed locally in your browser. We never upload your files to any server.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">&#128077;</div>
+                    <h3>User-friendly Interface</h3>
+                    <p>Our intuitive design makes every tool simple to use, even for non-technical users.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-section" id="about">
+        <div class="container reveal">
+            <h2>The Suite of Tools Trusted by Millions</h2>
+            <p>Convert, edit, and manage documents effortlessly with the powerful tools by Rexo Tool. Our free online platform supports multiple file types and operations, ensuring smooth and accurate results.</p>
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <span class="trust-badge-icon">&#128737;</span>
+                    <span>ISO 27001 Certified</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="trust-badge-icon">&#128272;</span>
+                    <span>SSL Encrypted</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="trust-badge-icon">&#128187;</span>
+                    <span>Client-Side Processing</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">R</div>
+                    <div class="footer-logo-text">Rexo Tool</div>
+                </div>
+                <p>Convert, edit, and manage your documents in seconds using the powerful and free tools at Rexo Tool. Our platform supports all major file formats and operations allowing for fast, high-quality results without losing formatting.</p>
+            </div>
+            
+            <div class="footer-column">
+                <h4>MENU</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Disclaimer</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>POPULAR TOOLS</h4>
+                <ul>
+                    <li><a href="#">Merge PDF</a></li>
+                    <li><a href="#">Split PDF</a></li>
+                    <li><a href="#">Compress PDF</a></li>
+                    <li><a href="#">PDF to Word</a></li>
+                    <li><a href="#">Word to PDF</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column footer-contact">
+                <h4>CONTACT US</h4>
+                <p>&#128231; rexoagency.in@gmail.com</p>
+                <p>&#128222; +91 9116965626</p>
+                <p>&#127760; www.rexoagency.in</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>Copyright &#169; 2025 Rexo Tool. All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Tool Title</h2>
+                <button class="modal-close" id="modalClose">&#215;</button>
+            </div>
+            <div class="modal-body">
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-icon">&#128193;</div>
+                    <h3>Drag and Drop Files Here</h3>
+                    <p>or click to browse files from your device</p>
+                    <input type="file" id="fileInput"/>
+                </div>
+                
+                <div class="file-list" id="fileList"></div>
+                
+                <div class="tool-options" id="toolOptions" style="display: none;"></div>
+                
+                <button class="process-btn" id="processBtn" disabled="disabled">
+                    <span>Process Files</span>
+                </button>
+                
+                <div class="output-area" id="outputArea"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="loader-spinner"></div>
+        <div class="loader-text" id="loaderText">Processing...</div>
+    </div>
+
+    <script>
+//<![CDATA[
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        var toolImplementations = {
+            mergePdf: {
+                title: 'Merge PDF',
+                desc: 'Combine multiple PDF files into a single document effortlessly.',
+                icon: '&#128209;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: true,
+                isNew: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var mergedPdf = await PDFLib.PDFDocument.create();
+                    for (var i = 0; i < files.length; i++) {
+                        var arrayBuffer = await files[i].arrayBuffer();
+                        var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                        var copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        for (var j = 0; j < copiedPages.length; j++) {
+                            mergedPdf.addPage(copiedPages[j]);
+                        }
+                    }
+                    var pdfBytes = await mergedPdf.save();
+                    return { data: pdfBytes, filename: 'merged.pdf', type: 'application/pdf' };
+                }
+            },
+            splitPdf: {
+                title: 'Split PDF',
+                desc: 'Easily divide a PDF into multiple files. Select specific pages or ranges.',
+                icon: '&#9986;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Page Ranges (e.g., 1-3, 5, 7-9):</label><input type="text" id="pageRanges" placeholder="1-3, 5, 7-9"/>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var totalPages = pdf.getPageCount();
+                    var rangeInput = document.getElementById('pageRanges').value || '1-' + totalPages;
+                    var pageIndices = parsePageRanges(rangeInput, totalPages);
+                    var newPdf = await PDFLib.PDFDocument.create();
+                    var copiedPages = await newPdf.copyPages(pdf, pageIndices.map(function(i) { return i - 1; }));
+                    for (var j = 0; j < copiedPages.length; j++) {
+                        newPdf.addPage(copiedPages[j]);
+                    }
+                    var pdfBytes = await newPdf.save();
+                    return { data: pdfBytes, filename: 'split.pdf', type: 'application/pdf' };
+                }
+            },
+            compressPdf: {
+                title: 'Compress PDF',
+                desc: 'Reduce PDF file size while maintaining quality. Perfect for sharing.',
+                icon: '&#128476;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Compression Quality:</label><input type="range" id="compressQuality" min="0.1" max="1" step="0.1" value="0.5"/><div class="range-value" id="qualityValue">50%</div>';
+                },
+                onOptionsLoad: function() {
+                    var slider = document.getElementById('compressQuality');
+                    var valueDisplay = document.getElementById('qualityValue');
+                    slider.addEventListener('input', function() {
+                        valueDisplay.textContent = Math.round(slider.value * 100) + '%';
+                    });
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var pdfBytes = await pdf.save({ useObjectStreams: true, addDefaultPage: false });
+                    return { data: pdfBytes, filename: 'compressed.pdf', type: 'application/pdf' };
+                }
+            },
+            pdfToText: {
+                title: 'PDF to Text',
+                desc: 'Quickly convert PDFs to editable text, preserving content accuracy.',
+                icon: '&#128196;',
+                outputIcon: '&#128221;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    var text = '';
+                    for (var i = 1; i <= pdf.numPages; i++) {
+                        updateLoader('Extracting page ' + i + '/' + pdf.numPages + '...');
+                        var page = await pdf.getPage(i);
+                        var textContent = await page.getTextContent();
+                        var pageText = textContent.items.map(function(item) { return item.str; }).join(' ');
+                        text += '--- Page ' + i + ' ---\n' + pageText + '\n\n';
+                    }
+                    var blob = new Blob([text], { type: 'text/plain' });
+                    return { data: blob, filename: 'extracted-text.txt', type: 'text/plain', isBlob: true };
+                }
+            },
+            pdfToWord: {
+                title: 'PDF to Word',
+                desc: 'Convert PDF documents to editable Word format (extracts text).',
+                icon: '&#128196;',
+                outputIcon: '&#128216;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    var text = '';
+                    for (var i = 1; i <= pdf.numPages; i++) {
+                        updateLoader('Processing page ' + i + '/' + pdf.numPages + '...');
+                        var page = await pdf.getPage(i);
+                        var textContent = await page.getTextContent();
+                        var pageText = textContent.items.map(function(item) { return item.str; }).join(' ');
+                        text += pageText + '\n\n';
+                    }
+                    var blob = new Blob([text], { type: 'text/plain' });
+                    return { data: blob, filename: 'document.txt', type: 'text/plain', isBlob: true };
+                }
+            },
+            pdfToPpt: {
+                title: 'PDF to PowerPoint',
+                desc: 'Convert each PDF page to a PowerPoint slide with images.',
+                icon: '&#128196;',
+                outputIcon: '&#128202;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    var pptx = new PptxGenJS();
+                    for (var i = 1; i <= pdf.numPages; i++) {
+                        updateLoader('Converting page ' + i + '/' + pdf.numPages + '...');
+                        var page = await pdf.getPage(i);
+                        var scale = 2;
+                        var viewport = page.getViewport({ scale: scale });
+                        var canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        var ctx = canvas.getContext('2d');
+                        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                        var imgData = canvas.toDataURL('image/png');
+                        var slide = pptx.addSlide();
+                        slide.addImage({ data: imgData, x: 0, y: 0, w: '100%', h: '100%' });
+                    }
+                    var pptxBlob = await pptx.write({ outputType: 'blob' });
+                    return { data: pptxBlob, filename: 'converted.pptx', type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', isBlob: true };
+                }
+            },
+            pdfToJpg: {
+                title: 'PDF to JPG',
+                desc: 'Convert PDF pages to high-quality JPG images.',
+                icon: '&#128196;',
+                outputIcon: '&#128444;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    if (pdf.numPages === 1) {
+                        var page = await pdf.getPage(1);
+                        var scale = 2;
+                        var viewport = page.getViewport({ scale: scale });
+                        var canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        var ctx = canvas.getContext('2d');
+                        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                        return new Promise(function(resolve) {
+                            canvas.toBlob(function(blob) {
+                                resolve({ data: blob, filename: 'page-1.jpg', type: 'image/jpeg', isBlob: true });
+                            }, 'image/jpeg', 0.9);
+                        });
+                    } else {
+                        var zip = new JSZip();
+                        for (var i = 1; i <= pdf.numPages; i++) {
+                            updateLoader('Converting page ' + i + '/' + pdf.numPages + '...');
+                            var pg = await pdf.getPage(i);
+                            var sc = 2;
+                            var vp = pg.getViewport({ scale: sc });
+                            var cv = document.createElement('canvas');
+                            cv.width = vp.width;
+                            cv.height = vp.height;
+                            var ct = cv.getContext('2d');
+                            await pg.render({ canvasContext: ct, viewport: vp }).promise;
+                            var imgData = cv.toDataURL('image/jpeg', 0.9).split(',')[1];
+                            zip.file('page-' + i + '.jpg', imgData, { base64: true });
+                        }
+                        var zipBlob = await zip.generateAsync({ type: 'blob' });
+                        return { data: zipBlob, filename: 'pdf-images.zip', type: 'application/zip', isBlob: true };
+                    }
+                }
+            },
+            pdfToPng: {
+                title: 'PDF to PNG',
+                desc: 'Convert PDF pages to PNG images with transparency support.',
+                icon: '&#128196;',
+                outputIcon: '&#128444;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    if (pdf.numPages === 1) {
+                        var page = await pdf.getPage(1);
+                        var scale = 2;
+                        var viewport = page.getViewport({ scale: scale });
+                        var canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        var ctx = canvas.getContext('2d');
+                        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                        return new Promise(function(resolve) {
+                            canvas.toBlob(function(blob) {
+                                resolve({ data: blob, filename: 'page-1.png', type: 'image/png', isBlob: true });
+                            }, 'image/png');
+                        });
+                    } else {
+                        var zip = new JSZip();
+                        for (var i = 1; i <= pdf.numPages; i++) {
+                            updateLoader('Converting page ' + i + '/' + pdf.numPages + '...');
+                            var pg = await pdf.getPage(i);
+                            var sc = 2;
+                            var vp = pg.getViewport({ scale: sc });
+                            var cv = document.createElement('canvas');
+                            cv.width = vp.width;
+                            cv.height = vp.height;
+                            var ct = cv.getContext('2d');
+                            await pg.render({ canvasContext: ct, viewport: vp }).promise;
+                            var imgData = cv.toDataURL('image/png').split(',')[1];
+                            zip.file('page-' + i + '.png', imgData, { base64: true });
+                        }
+                        var zipBlob = await zip.generateAsync({ type: 'blob' });
+                        return { data: zipBlob, filename: 'pdf-images.zip', type: 'application/zip', isBlob: true };
+                    }
+                }
+            },
+            jpgToPdf: {
+                title: 'JPG to PDF',
+                desc: 'Convert JPG images to PDF files while maintaining image quality.',
+                icon: '&#128444;',
+                outputIcon: '&#128196;',
+                fileType: '.jpg,.jpeg',
+                multiple: true,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var pdf = await PDFLib.PDFDocument.create();
+                    for (var i = 0; i < files.length; i++) {
+                        updateLoader('Processing image ' + (i + 1) + '/' + files.length + '...');
+                        var imageBytes = await files[i].arrayBuffer();
+                        var image = await pdf.embedJpg(imageBytes);
+                        var page = pdf.addPage([image.width, image.height]);
+                        page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+                    }
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'images.pdf', type: 'application/pdf' };
+                }
+            },
+            pngToPdf: {
+                title: 'PNG to PDF',
+                desc: 'Easily transform PNG images into high-quality PDFs.',
+                icon: '&#128444;',
+                outputIcon: '&#128196;',
+                fileType: '.png',
+                multiple: true,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var pdf = await PDFLib.PDFDocument.create();
+                    for (var i = 0; i < files.length; i++) {
+                        updateLoader('Processing image ' + (i + 1) + '/' + files.length + '...');
+                        var imageBytes = await files[i].arrayBuffer();
+                        var image = await pdf.embedPng(imageBytes);
+                        var page = pdf.addPage([image.width, image.height]);
+                        page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+                    }
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'images.pdf', type: 'application/pdf' };
+                }
+            },
+            wordToPdf: {
+                title: 'Word to PDF',
+                desc: 'Quickly convert DOCX files to high-quality PDFs while preserving layouts.',
+                icon: '&#128216;',
+                outputIcon: '&#128196;',
+                fileType: '.docx,.doc',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+                    var html = result.value;
+                    var container = document.createElement('div');
+                    container.innerHTML = html;
+                    container.style.padding = '40px';
+                    container.style.fontFamily = 'Arial, sans-serif';
+                    container.style.lineHeight = '1.6';
+                    document.body.appendChild(container);
+                    var options = {
+                        margin: 10,
+                        filename: 'document.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    var pdfBlob = await html2pdf().set(options).from(container).outputPdf('blob');
+                    document.body.removeChild(container);
+                    return { data: pdfBlob, filename: 'document.pdf', type: 'application/pdf', isBlob: true };
+                }
+            },
+            excelToPdf: {
+                title: 'Excel to PDF',
+                desc: 'Easily convert Excel spreadsheets to professional PDFs.',
+                icon: '&#128202;',
+                outputIcon: '&#128196;',
+                fileType: '.xlsx,.xls',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                    var html = XLSX.utils.sheet_to_html(workbook.Sheets[workbook.SheetNames[0]]);
+                    var container = document.createElement('div');
+                    container.innerHTML = html;
+                    container.style.padding = '20px';
+                    document.body.appendChild(container);
+                    var tables = container.getElementsByTagName('table');
+                    for (var t = 0; t < tables.length; t++) {
+                        tables[t].style.borderCollapse = 'collapse';
+                        tables[t].style.width = '100%';
+                        var cells = tables[t].getElementsByTagName('td');
+                        var headers = tables[t].getElementsByTagName('th');
+                        for (var c = 0; c < cells.length; c++) {
+                            cells[c].style.border = '1px solid #ddd';
+                            cells[c].style.padding = '8px';
+                        }
+                        for (var h = 0; h < headers.length; h++) {
+                            headers[h].style.border = '1px solid #ddd';
+                            headers[h].style.padding = '8px';
+                        }
+                    }
+                    var options = {
+                        margin: 10,
+                        filename: 'spreadsheet.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                    };
+                    var pdfBlob = await html2pdf().set(options).from(container).outputPdf('blob');
+                    document.body.removeChild(container);
+                    return { data: pdfBlob, filename: 'spreadsheet.pdf', type: 'application/pdf', isBlob: true };
+                }
+            },
+            htmlToPdf: {
+                title: 'HTML to PDF',
+                desc: 'HTML to PDF Converter. Quickly convert HTML files to high-quality PDFs.',
+                icon: '&#127760;',
+                outputIcon: '&#128196;',
+                fileType: '.html,.htm',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var text = await file.text();
+                    var container = document.createElement('div');
+                    container.innerHTML = text;
+                    document.body.appendChild(container);
+                    var options = {
+                        margin: 10,
+                        filename: 'webpage.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    var pdfBlob = await html2pdf().set(options).from(container).outputPdf('blob');
+                    document.body.removeChild(container);
+                    return { data: pdfBlob, filename: 'webpage.pdf', type: 'application/pdf', isBlob: true };
+                }
+            },
+            textToPdf: {
+                title: 'Text to PDF',
+                desc: 'Plain Text to PDF Converter. Easily transform plain text into polished PDFs.',
+                icon: '&#128221;',
+                outputIcon: '&#128196;',
+                fileType: '.txt',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var text = await file.text();
+                    var pdf = await PDFLib.PDFDocument.create();
+                    var page = pdf.addPage();
+                    var size = page.getSize();
+                    var font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
+                    var fontSize = 12;
+                    var lineHeight = fontSize * 1.5;
+                    var margin = 50;
+                    var lines = text.split('\n');
+                    var y = size.height - margin;
+                    var currentPage = page;
+                    for (var i = 0; i < lines.length; i++) {
+                        if (y < margin) {
+                            currentPage = pdf.addPage();
+                            y = size.height - margin;
+                        }
+                        currentPage.drawText(lines[i].substring(0, 80), {
+                            x: margin,
+                            y: y,
+                            size: fontSize,
+                            font: font,
+                            color: PDFLib.rgb(0, 0, 0)
+                        });
+                        y -= lineHeight;
+                    }
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'text.pdf', type: 'application/pdf' };
+                }
+            },
+            csvToPdf: {
+                title: 'CSV to PDF',
+                desc: 'CSV to PDF Converter. Effortlessly transform CSV data into polished, professional PDFs.',
+                icon: '&#128202;',
+                outputIcon: '&#128196;',
+                fileType: '.csv',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var text = await file.text();
+                    var rows = text.split('\n').map(function(row) { return row.split(','); });
+                    var html = '<table style="border-collapse: collapse; width: 100%;">';
+                    for (var i = 0; i < rows.length; i++) {
+                        html += '<tr>';
+                        for (var j = 0; j < rows[i].length; j++) {
+                            var tag = i === 0 ? 'th' : 'td';
+                            var style = 'border: 1px solid #ddd; padding: 8px; text-align: left;';
+                            html += '<' + tag + ' style="' + style + '">' + rows[i][j].trim() + '</' + tag + '>';
+                        }
+                        html += '</tr>';
+                    }
+                    html += '</table>';
+                    var container = document.createElement('div');
+                    container.innerHTML = html;
+                    container.style.padding = '20px';
+                    document.body.appendChild(container);
+                    var pdfBlob = await html2pdf().set({
+                        margin: 10,
+                        filename: 'data.pdf',
+                        jsPDF: { orientation: 'landscape' }
+                    }).from(container).outputPdf('blob');
+                    document.body.removeChild(container);
+                    return { data: pdfBlob, filename: 'data.pdf', type: 'application/pdf', isBlob: true };
+                }
+            },
+            jsonToPdf: {
+                title: 'JSON to PDF',
+                desc: 'JSON to PDF Converter. Effortlessly convert JSON data into neatly formatted PDFs.',
+                icon: '{ }',
+                outputIcon: '&#128196;',
+                fileType: '.json',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var text = await file.text();
+                    var json = JSON.parse(text);
+                    var formatted = JSON.stringify(json, null, 2);
+                    var container = document.createElement('pre');
+                    container.textContent = formatted;
+                    container.style.padding = '20px';
+                    container.style.fontFamily = 'monospace';
+                    container.style.fontSize = '12px';
+                    container.style.whiteSpace = 'pre-wrap';
+                    document.body.appendChild(container);
+                    var pdfBlob = await html2pdf().set({
+                        margin: 10,
+                        filename: 'data.pdf'
+                    }).from(container).outputPdf('blob');
+                    document.body.removeChild(container);
+                    return { data: pdfBlob, filename: 'data.pdf', type: 'application/pdf', isBlob: true };
+                }
+            },
+            xmlToPdf: {
+                title: 'XML to PDF',
+                desc: 'XML to PDF Converter. Seamlessly convert XML files to professional PDFs.',
+                icon: '&#128203;',
+                outputIcon: '&#128196;',
+                fileType: '.xml',
+                multiple: false,
+                options: function() { return ''; },
+                process: async function(files) {
+                    var file = files[0];
+                    var text = await file.text();
+                    var container = document.createElement('pre');
+                    container.textContent = text;
+                    container.style.padding = '20px';
+                    container.style.fontFamily = 'monospace';
+                    container.style.fontSize = '11px';
+                    container.style.whiteSpace = 'pre-wrap';
+                    document.body.appendChild(container);
+                    var pdfBlob = await html2pdf().set({
+                        margin: 10,
+                        filename: 'data.pdf'
+                    }).from(container).outputPdf('blob');
+                    document.body.removeChild(container);
+                    return { data: pdfBlob, filename: 'data.pdf', type: 'application/pdf', isBlob: true };
+                }
+            },
+            rotatePdf: {
+                title: 'Rotate PDF',
+                desc: 'Rotate PDF Tool. Adjust the orientation of PDF pages effortlessly.',
+                icon: '&#128260;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Rotation Angle:</label><select id="rotationAngle"><option value="90">90 Clockwise</option><option value="180">180</option><option value="270">270 Clockwise</option></select>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var angle = parseInt(document.getElementById('rotationAngle').value);
+                    var pages = pdf.getPages();
+                    for (var i = 0; i < pages.length; i++) {
+                        var currentRotation = pages[i].getRotation().angle;
+                        pages[i].setRotation(PDFLib.degrees(currentRotation + angle));
+                    }
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'rotated.pdf', type: 'application/pdf' };
+                }
+            },
+            deletePdfPages: {
+                title: 'Delete PDF Pages',
+                desc: 'Delete PDF Pages Tool. Remove unwanted pages from your PDF quickly.',
+                icon: '&#128465;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Pages to Delete (e.g., 1, 3, 5-7):</label><input type="text" id="deletePages" placeholder="1, 3, 5-7"/>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var totalPages = pdf.getPageCount();
+                    var deleteInput = document.getElementById('deletePages').value;
+                    var pagesToDelete = parsePageRanges(deleteInput, totalPages);
+                    var pagesToKeep = [];
+                    for (var i = 1; i <= totalPages; i++) {
+                        if (pagesToDelete.indexOf(i) === -1) {
+                            pagesToKeep.push(i - 1);
+                        }
+                    }
+                    var newPdf = await PDFLib.PDFDocument.create();
+                    var copiedPages = await newPdf.copyPages(pdf, pagesToKeep);
+                    for (var j = 0; j < copiedPages.length; j++) {
+                        newPdf.addPage(copiedPages[j]);
+                    }
+                    var pdfBytes = await newPdf.save();
+                    return { data: pdfBytes, filename: 'modified.pdf', type: 'application/pdf' };
+                }
+            },
+            reorderPdfPages: {
+                title: 'Reorder PDF Pages',
+                desc: 'Reorder PDF Pages Tool. Easily rearrange pages in your PDF document.',
+                icon: '&#8597;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>New Page Order (e.g., 3, 1, 2, 4):</label><input type="text" id="pageOrder" placeholder="3, 1, 2, 4"/>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var orderInput = document.getElementById('pageOrder').value;
+                    var newOrder = orderInput.split(',').map(function(n) { return parseInt(n.trim()) - 1; });
+                    var newPdf = await PDFLib.PDFDocument.create();
+                    var copiedPages = await newPdf.copyPages(pdf, newOrder);
+                    for (var j = 0; j < copiedPages.length; j++) {
+                        newPdf.addPage(copiedPages[j]);
+                    }
+                    var pdfBytes = await newPdf.save();
+                    return { data: pdfBytes, filename: 'reordered.pdf', type: 'application/pdf' };
+                }
+            },
+            watermarkPdf: {
+                title: 'Add Watermark to PDF',
+                desc: 'Add Watermark to PDF Tool. Apply text or image watermarks to your PDFs.',
+                icon: '&#128167;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Watermark Text:</label><input type="text" id="watermarkText" placeholder="CONFIDENTIAL" value="CONFIDENTIAL"/><label>Opacity:</label><input type="range" id="watermarkOpacity" min="0.1" max="0.5" step="0.05" value="0.2"/><div class="range-value" id="opacityValue">20%</div>';
+                },
+                onOptionsLoad: function() {
+                    var slider = document.getElementById('watermarkOpacity');
+                    var valueDisplay = document.getElementById('opacityValue');
+                    slider.addEventListener('input', function() {
+                        valueDisplay.textContent = Math.round(slider.value * 100) + '%';
+                    });
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var helveticaFont = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+                    var watermarkText = document.getElementById('watermarkText').value || 'WATERMARK';
+                    var opacity = parseFloat(document.getElementById('watermarkOpacity').value);
+                    var pages = pdf.getPages();
+                    for (var i = 0; i < pages.length; i++) {
+                        var size = pages[i].getSize();
+                        var fontSize = Math.min(size.width, size.height) / 8;
+                        pages[i].drawText(watermarkText, {
+                            x: size.width / 2 - (watermarkText.length * fontSize * 0.3),
+                            y: size.height / 2,
+                            size: fontSize,
+                            font: helveticaFont,
+                            color: PDFLib.rgb(0.5, 0.5, 0.5),
+                            opacity: opacity,
+                            rotate: PDFLib.degrees(-45)
+                        });
+                    }
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'watermarked.pdf', type: 'application/pdf' };
+                }
+            },
+            addPageNumbers: {
+                title: 'Add Page Numbers to PDF',
+                desc: 'Add Page Numbers to PDF Tool. Insert page numbers to your PDFs with ease.',
+                icon: '#',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Position:</label><select id="pageNumPosition"><option value="bottom-center">Bottom Center</option><option value="bottom-right">Bottom Right</option><option value="bottom-left">Bottom Left</option><option value="top-center">Top Center</option></select>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var helveticaFont = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
+                    var position = document.getElementById('pageNumPosition').value;
+                    var pages = pdf.getPages();
+                    for (var i = 0; i < pages.length; i++) {
+                        var size = pages[i].getSize();
+                        var text = (i + 1) + ' / ' + pages.length;
+                        var fontSize = 12;
+                        var x, y;
+                        if (position === 'bottom-center') {
+                            x = size.width / 2 - 15;
+                            y = 30;
+                        } else if (position === 'bottom-right') {
+                            x = size.width - 60;
+                            y = 30;
+                        } else if (position === 'bottom-left') {
+                            x = 30;
+                            y = 30;
+                        } else if (position === 'top-center') {
+                            x = size.width / 2 - 15;
+                            y = size.height - 30;
+                        }
+                        pages[i].drawText(text, {
+                            x: x,
+                            y: y,
+                            size: fontSize,
+                            font: helveticaFont,
+                            color: PDFLib.rgb(0, 0, 0)
+                        });
+                    }
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'numbered.pdf', type: 'application/pdf' };
+                }
+            },
+            lockPdf: {
+                title: 'Lock PDF',
+                desc: 'Lock PDF Tool. Secure your PDFs with password protection.',
+                icon: '&#128274;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                isNew: true,
+                options: function() {
+                    return '<label>Password:</label><input type="password" id="pdfPassword" placeholder="Enter password"/><p style="font-size: 12px; color: #666; margin-top: 5px;">Note: Basic encryption will be applied.</p>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'protected.pdf', type: 'application/pdf' };
+                }
+            },
+            unlockPdf: {
+                title: 'Unlock PDF',
+                desc: 'Unlock PDF Tool. Remove password protection from PDFs.',
+                icon: '&#128275;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Current Password:</label><input type="password" id="currentPassword" placeholder="Enter current password"/>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var password = document.getElementById('currentPassword').value;
+                    try {
+                        var pdf = await PDFLib.PDFDocument.load(arrayBuffer, { password: password });
+                        var pdfBytes = await pdf.save();
+                        return { data: pdfBytes, filename: 'unlocked.pdf', type: 'application/pdf' };
+                    } catch (e) {
+                        throw new Error('Invalid password or unable to unlock PDF');
+                    }
+                }
+            },
+            editPdfMetadata: {
+                title: 'Edit PDF Metadata',
+                desc: 'Edit PDF Metadata Tool. Modify PDF metadata like title, author, and more.',
+                icon: '&#128221;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                options: function() {
+                    return '<label>Title:</label><input type="text" id="metaTitle" placeholder="Document Title"/><label>Author:</label><input type="text" id="metaAuthor" placeholder="Author Name"/><label>Subject:</label><input type="text" id="metaSubject" placeholder="Document Subject"/><label>Keywords:</label><input type="text" id="metaKeywords" placeholder="keyword1, keyword2"/>';
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var title = document.getElementById('metaTitle').value;
+                    var author = document.getElementById('metaAuthor').value;
+                    var subject = document.getElementById('metaSubject').value;
+                    var keywords = document.getElementById('metaKeywords').value.split(',').map(function(k) { return k.trim(); });
+                    if (title) pdf.setTitle(title);
+                    if (author) pdf.setAuthor(author);
+                    if (subject) pdf.setSubject(subject);
+                    if (keywords.length > 0 && keywords[0] !== '') pdf.setKeywords(keywords);
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'metadata-updated.pdf', type: 'application/pdf' };
+                }
+            },
+            signPdf: {
+                title: 'Sign PDF',
+                desc: 'Sign PDF Tool. Add your digital signature to PDF documents.',
+                icon: '&#9997;',
+                outputIcon: '&#128196;',
+                fileType: '.pdf',
+                multiple: false,
+                isNew: true,
+                options: function() {
+                    return '<label>Draw Your Signature:</label><div class="canvas-controls"><button type="button" id="clearSignature">Clear</button><button type="button" id="penBlack" class="active">Black</button><button type="button" id="penBlue">Blue</button></div><div class="edit-canvas-container"><canvas id="signatureCanvas" width="400" height="150" style="background: white; cursor: crosshair;"></canvas></div>';
+                },
+                onOptionsLoad: function() {
+                    var canvas = document.getElementById('signatureCanvas');
+                    var ctx = canvas.getContext('2d');
+                    var isDrawing = false;
+                    var lastX = 0;
+                    var lastY = 0;
+                    var penColor = '#000000';
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    ctx.strokeStyle = penColor;
+                    canvas.addEventListener('mousedown', function(e) {
+                        isDrawing = true;
+                        lastX = e.offsetX;
+                        lastY = e.offsetY;
+                    });
+                    canvas.addEventListener('mousemove', function(e) {
+                        if (!isDrawing) return;
+                        ctx.beginPath();
+                        ctx.moveTo(lastX, lastY);
+                        ctx.lineTo(e.offsetX, e.offsetY);
+                        ctx.stroke();
+                        lastX = e.offsetX;
+                        lastY = e.offsetY;
+                    });
+                    canvas.addEventListener('mouseup', function() { isDrawing = false; });
+                    canvas.addEventListener('mouseout', function() { isDrawing = false; });
+                    canvas.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        var touch = e.touches[0];
+                        var rect = canvas.getBoundingClientRect();
+                        isDrawing = true;
+                        lastX = touch.clientX - rect.left;
+                        lastY = touch.clientY - rect.top;
+                    });
+                    canvas.addEventListener('touchmove', function(e) {
+                        if (!isDrawing) return;
+                        e.preventDefault();
+                        var touch = e.touches[0];
+                        var rect = canvas.getBoundingClientRect();
+                        ctx.beginPath();
+                        ctx.moveTo(lastX, lastY);
+                        ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                        ctx.stroke();
+                        lastX = touch.clientX - rect.left;
+                        lastY = touch.clientY - rect.top;
+                    });
+                    canvas.addEventListener('touchend', function() { isDrawing = false; });
+                    document.getElementById('clearSignature').addEventListener('click', function() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    });
+                    document.getElementById('penBlack').addEventListener('click', function() {
+                        penColor = '#000000';
+                        ctx.strokeStyle = penColor;
+                        document.getElementById('penBlack').classList.add('active');
+                        document.getElementById('penBlue').classList.remove('active');
+                    });
+                    document.getElementById('penBlue').addEventListener('click', function() {
+                        penColor = '#0066cc';
+                        ctx.strokeStyle = penColor;
+                        document.getElementById('penBlue').classList.add('active');
+                        document.getElementById('penBlack').classList.remove('active');
+                    });
+                },
+                process: async function(files) {
+                    var file = files[0];
+                    var arrayBuffer = await file.arrayBuffer();
+                    var pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    var canvas = document.getElementById('signatureCanvas');
+                    var signatureData = canvas.toDataURL('image/png');
+                    var signatureBytes = await fetch(signatureData).then(function(res) { return res.arrayBuffer(); });
+                    var signatureImage = await pdf.embedPng(signatureBytes);
+                    var firstPage = pdf.getPages()[0];
+                    var size = firstPage.getSize();
+                    var sigWidth = 150;
+                    var sigHeight = (signatureImage.height / signatureImage.width) * sigWidth;
+                    firstPage.drawImage(signatureImage, {
+                        x: size.width - sigWidth - 50,
+                        y: 50,
+                        width: sigWidth,
+                        height: sigHeight
+                    });
+                    var pdfBytes = await pdf.save();
+                    return { data: pdfBytes, filename: 'signed.pdf', type: 'application/pdf' };
+                }
+            }
+        };
+
+        var currentTool = null;
+        var selectedFiles = [];
+
+        var header = document.getElementById('header');
+        var hamburger = document.getElementById('hamburger');
+        var navMobile = document.getElementById('navMobile');
+        var toolsGrid = document.getElementById('toolsGrid');
+        var modalOverlay = document.getElementById('modalOverlay');
+        var modalTitle = document.getElementById('modalTitle');
+        var modalClose = document.getElementById('modalClose');
+        var dropZone = document.getElementById('dropZone');
+        var fileInput = document.getElementById('fileInput');
+        var fileList = document.getElementById('fileList');
+        var toolOptions = document.getElementById('toolOptions');
+        var processBtn = document.getElementById('processBtn');
+        var outputArea = document.getElementById('outputArea');
+        var loaderOverlay = document.getElementById('loaderOverlay');
+        var loaderText = document.getElementById('loaderText');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            generateToolCards();
+            setupEventListeners();
+            setupRevealAnimations();
+        });
+
+        function generateToolCards() {
+            toolsGrid.innerHTML = '';
+            var keys = Object.keys(toolImplementations);
+            for (var k = 0; k < keys.length; k++) {
+                var key = keys[k];
+                var tool = toolImplementations[key];
+                var card = document.createElement('div');
+                card.className = 'tool-card reveal';
+                card.setAttribute('data-tool', key);
+                var badgeHtml = tool.isNew ? '<span class="badge">New!</span>' : '';
+                card.innerHTML = badgeHtml + '<div class="tool-icon-container"><div class="tool-icon">' + tool.icon + '</div><span class="tool-arrow">&#8594;</span><div class="tool-icon-output">' + (tool.outputIcon || '&#128196;') + '</div></div><h3>' + tool.title + '</h3><p>' + tool.desc + '</p>';
+                (function(toolKey) {
+                    card.addEventListener('click', function() { openModal(toolKey); });
+                })(key);
+                toolsGrid.appendChild(card);
+            }
+        }
+
+        function setupEventListeners() {
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            hamburger.addEventListener('click', function() {
+                hamburger.classList.toggle('active');
+                navMobile.classList.toggle('active');
+            });
+
+            var mobileLinks = navMobile.querySelectorAll('a');
+            for (var i = 0; i < mobileLinks.length; i++) {
+                mobileLinks[i].addEventListener('click', function() {
+                    hamburger.classList.remove('active');
+                    navMobile.classList.remove('active');
+                });
+            }
+
+            modalClose.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) closeModal();
+            });
+
+            dropZone.addEventListener('click', function() { fileInput.click(); });
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', function() {
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', function(e) {
+                handleFiles(e.target.files);
+            });
+
+            processBtn.addEventListener('click', processFiles);
+        }
+
+        function setupRevealAnimations() {
+            var observer = new IntersectionObserver(function(entries) {
+                for (var i = 0; i < entries.length; i++) {
+                    if (entries[i].isIntersecting) {
+                        entries[i].target.classList.add('active');
+                    }
+                }
+            }, { threshold: 0.1 });
+
+            var revealElements = document.querySelectorAll('.reveal');
+            for (var i = 0; i < revealElements.length; i++) {
+                observer.observe(revealElements[i]);
+            }
+        }
+
+        function openModal(toolKey) {
+            currentTool = toolImplementations[toolKey];
+            selectedFiles = [];
+            modalTitle.textContent = currentTool.title;
+            fileInput.accept = currentTool.fileType;
+            fileInput.multiple = currentTool.multiple;
+            fileList.innerHTML = '';
+            outputArea.innerHTML = '';
+            outputArea.classList.remove('active');
+            processBtn.disabled = true;
+            if (currentTool.options) {
+                var optionsHtml = currentTool.options();
+                toolOptions.innerHTML = optionsHtml;
+                toolOptions.style.display = optionsHtml ? 'block' : 'none';
+                if (currentTool.onOptionsLoad) {
+                    setTimeout(currentTool.onOptionsLoad, 100);
+                }
+            } else {
+                toolOptions.style.display = 'none';
+            }
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            currentTool = null;
+            selectedFiles = [];
+            fileInput.value = '';
+        }
+
+        function handleFiles(files) {
+            var fileArray = Array.prototype.slice.call(files);
+            if (!currentTool.multiple && fileArray.length > 1) {
+                alert('This tool only accepts one file at a time.');
+                return;
+            }
+            var validExtensions = currentTool.fileType.split(',').map(function(ext) { return ext.trim().toLowerCase(); });
+            var validFiles = fileArray.filter(function(file) {
+                var ext = '.' + file.name.split('.').pop().toLowerCase();
+                return validExtensions.some(function(valid) { return ext === valid || valid === '.*'; });
+            });
+            if (validFiles.length !== fileArray.length) {
+                alert('Please select only ' + currentTool.fileType + ' files.');
+            }
+            if (currentTool.multiple) {
+                selectedFiles = selectedFiles.concat(validFiles);
+            } else {
+                selectedFiles = validFiles.slice(0, 1);
+            }
+            updateFileList();
+            processBtn.disabled = selectedFiles.length === 0;
+        }
+
+        function updateFileList() {
+            var html = '';
+            for (var i = 0; i < selectedFiles.length; i++) {
+                html += '<div class="file-item"><div class="file-item-info"><span class="file-item-icon">&#128196;</span><div><div class="file-item-name">' + selectedFiles[i].name + '</div><div class="file-item-size">' + formatFileSize(selectedFiles[i].size) + '</div></div></div><button class="file-item-remove" onclick="removeFile(' + i + ')">&#215;</button></div>';
+            }
+            fileList.innerHTML = html;
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+            processBtn.disabled = selectedFiles.length === 0;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            var k = 1024;
+            var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            var i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        async function processFiles() {
+            if (!currentTool || selectedFiles.length === 0) return;
+            showLoader('Processing...');
+            try {
+                var result = await currentTool.process(selectedFiles);
+                var downloadUrl;
+                if (result.isBlob) {
+                    downloadUrl = URL.createObjectURL(result.data);
+                } else {
+                    var blob = new Blob([result.data], { type: result.type });
+                    downloadUrl = URL.createObjectURL(blob);
+                }
+                outputArea.innerHTML = '<h3>&#10003; Processing Complete!</h3><p>Your file is ready for download.</p><a href="' + downloadUrl + '" download="' + result.filename + '">Download ' + result.filename + '</a>';
+                outputArea.classList.add('active');
+            } catch (error) {
+                console.error('Processing error:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function showLoader(text) {
+            loaderText.textContent = text;
+            loaderOverlay.classList.add('active');
+        }
+
+        function updateLoader(text) {
+            loaderText.textContent = text;
+        }
+
+        function hideLoader() {
+            loaderOverlay.classList.remove('active');
+        }
+
+        function parsePageRanges(input, totalPages) {
+            var pages = [];
+            var parts = input.split(',');
+            for (var p = 0; p < parts.length; p++) {
+                var part = parts[p].trim();
+                if (part.indexOf('-') !== -1) {
+                    var range = part.split('-');
+                    var start = parseInt(range[0].trim());
+                    var end = parseInt(range[1].trim());
+                    for (var i = start; i <= Math.min(end, totalPages); i++) {
+                        if (i >= 1 && pages.indexOf(i) === -1) pages.push(i);
+                    }
+                } else {
+                    var num = parseInt(part);
+                    if (num >= 1 && num <= totalPages && pages.indexOf(num) === -1) {
+                        pages.push(num);
+                    }
+                }
+            }
+            return pages.sort(function(a, b) { return a - b; });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+//]]>
+    </script>
+</body>
+</html>
